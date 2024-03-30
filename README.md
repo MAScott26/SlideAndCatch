@@ -1,5 +1,9 @@
 Slide And Catch Game Part One
 
+
+All assets are created by me
+
+
 Player Class creation
   init
   set image, size, original position, and movespeed.
