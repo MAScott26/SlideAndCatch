@@ -6,22 +6,30 @@ SlideAndCatch
 """
 import random, simpleGE, pygame
   
-score = 0
   
 class Player(simpleGE.Sprite):
     def __init__(self, scene):
         super().__init__(scene)
-        self.setImage("Player.png")
+        self.setImage("squirrel.png")
         self.sprites = [self]
         self.setSize(50, 50)
         self.position = (320, 400)
         self.movespeed = 5
-        
+        self.flip = False
     def process(self):
+        
         if self.isKeyPressed(pygame.K_LEFT):
+            if self.flip == True:
+                self.flip = False
+                self.image = pygame.transform.flip(self.image, True, False )
             self.x -= self.movespeed 
         if self.isKeyPressed(pygame.K_RIGHT):
+            if self.flip == False:
+                self.flip = True
+                self.image = pygame.transform.flip(self.image, True, False )
             self.x += self.movespeed
+           
+        
 
 class Coin(simpleGE.Sprite):
     def __init__(self, scene):
@@ -40,25 +48,24 @@ class Coin(simpleGE.Sprite):
         if self.bottom > self.screenHeight:
             self.reset()
 
-    def collide(self):
-        if self.collidesWith(Player(self)):
+    def process(self):
+        if self.collidesWith(self.scene.player):
             self.reset()
 
+    
         
 class Game(simpleGE.Scene):
     def __init__(self):
         super().__init__()
         self.setImage("Background.png")
         self.player = Player(self)
-        self.coin = Coin(self)
-        self.sprites = [self.player, self.coin]
+        self.pouch = []
+        for i in range(7):
+            self.pouch.append(Coin(self))
+        self.sprites = [self.player, self.pouch]
 
-    def process(self):
-        if self.coin.collidesWith(self.player):
-            self.coin.reset()
-            score += 1
-            print(score)
-        
+
+
 def main():
     game = Game()
     game.start()
