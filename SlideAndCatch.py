@@ -6,7 +6,7 @@ SlideAndCatch
 """
 import random, simpleGE, pygame
   
-  
+
 class Player(simpleGE.Sprite):
     def __init__(self, scene):
         super().__init__(scene)
@@ -28,8 +28,6 @@ class Player(simpleGE.Sprite):
                 self.flip = True
                 self.image = pygame.transform.flip(self.image, True, False )
             self.x += self.movespeed
-           
-        
 
 class Coin(simpleGE.Sprite):
     def __init__(self, scene):
@@ -52,19 +50,33 @@ class Coin(simpleGE.Sprite):
         if self.collidesWith(self.scene.player):
             self.reset()
 
-    
+class lblScore(simpleGE.Label):
+    def __init__(self):
+        super().__init__()
+        self.center = (100, 20)
+        self.text = "score:"
+        
+class lblTimer(simpleGE.Label):
+    def __init(self):
+        super().__init__()
+        self.center = (500, 200)
+        self.text = "10"
+        
         
 class Game(simpleGE.Scene):
     def __init__(self):
         super().__init__()
         self.setImage("Background.png")
         self.player = Player(self)
+        
+        self.scoreBoard = lblScore() 
+        self.timer = lblTimer()
+        
         self.pouch = []
         for i in range(7):
             self.pouch.append(Coin(self))
-        self.sprites = [self.player, self.pouch]
-
-
+            
+        self.sprites = [self.player, self.pouch, self.scoreBoard, self.timer]
 
 def main():
     game = Game()
