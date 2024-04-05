@@ -46,22 +46,24 @@ class Coin(simpleGE.Sprite):
         if self.bottom > self.screenHeight:
             self.reset()
 
-    def process(self):
-        if self.collidesWith(self.scene.player):
-            self.reset()
 
 class lblScore(simpleGE.Label):
     def __init__(self):
         super().__init__()
         self.center = (100, 20)
-        self.text = "score:"
+        self.score = 0
+        self.text = f"Score: {self.score}"
+    
+    def addScore(self, scoreChange):
+        self.score += scoreChange
+        self.text = f"Score: {self.score}"
+        
         
 class lblTimer(simpleGE.Label):
-    def __init(self):
+    def __init__(self):
         super().__init__()
-        self.center = (500, 200)
-        self.text = "10"
-        
+        self.center = (500, 20)
+        self.text = "TIMER"
         
 class Game(simpleGE.Scene):
     def __init__(self):
@@ -69,15 +71,21 @@ class Game(simpleGE.Scene):
         self.setImage("Background.png")
         self.player = Player(self)
         
-        self.scoreBoard = lblScore() 
-        self.timer = lblTimer()
+        self.lblScore = lblScore() 
+        self.timerBoard = lblTimer()
         
         self.pouch = []
-        for i in range(7):
+        for i in range(10):
             self.pouch.append(Coin(self))
             
-        self.sprites = [self.player, self.pouch, self.scoreBoard, self.timer]
-
+        self.sprites = [self.player, self.pouch, self.timerBoard, self.lblScore]
+        
+    def process(self):
+        for Coin in self.pouch:
+            if self.player.collidesWith(Coin):
+                Coin.reset()
+                self.lblScore.addScore(1)
+        
 def main():
     game = Game()
     game.start()
