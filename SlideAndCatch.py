@@ -40,7 +40,7 @@ class Coin(simpleGE.Sprite):
     def reset(self):
         self.x = random.randint(0, self.screenWidth)
         self.y = 10
-        self.dy = random.randint(3, 8)
+        self.dy = random.randint(5, 20)
         
     def checkBounds(self):
         if self.bottom > self.screenHeight:
@@ -63,7 +63,8 @@ class lblTimer(simpleGE.Label):
     def __init__(self):
         super().__init__()
         self.center = (500, 20)
-        self.text = "TIMER"
+        self.text = "Time: 10"
+        
         
 class Game(simpleGE.Scene):
     def __init__(self):
@@ -72,13 +73,15 @@ class Game(simpleGE.Scene):
         self.player = Player(self)
         
         self.lblScore = lblScore() 
-        self.timerBoard = lblTimer()
+        self.timer = simpleGE.Timer()
+        self.timer.totalTime = 10
+        self.lblTimer = lblTimer()
         
         self.pouch = []
         for i in range(10):
             self.pouch.append(Coin(self))
             
-        self.sprites = [self.player, self.pouch, self.timerBoard, self.lblScore]
+        self.sprites = [self.player, self.pouch, self.lblTimer, self.lblScore]
         
     def process(self):
         for Coin in self.pouch:
@@ -86,7 +89,21 @@ class Game(simpleGE.Scene):
                 Coin.reset()
                 self.lblScore.addScore(1)
         
+        self.lblTimer.text = f"Time: {self.timer.getTimeLeft():.2f}"
+        if self.timer.getTimeLeft() <=0:
+            print(self.lblScore.score)
+            self.stop()
+            
+class startScreen(simpleGE.Scene):
+    def __init__(self):
+        super().__init__()
+        self.setImage("Background.png")
+        
+        self.buttonPlay = simpleGE.Button()
+               
 def main():
+    startScreen = startScreen()
+    startScreen.start
     game = Game()
     game.start()
     
