@@ -72,10 +72,15 @@ class Game(simpleGE.Scene):
         self.setImage("Background.png")
         self.player = Player(self)
         
+        self.bgm = simpleGE.Sound("SquirrelMusic.wav")
+        self.bgm.play()
+        self.pickUp = simpleGE.Sound("AcornGrab.wav")
+        
         self.lblScore = lblScore() 
         self.timer = simpleGE.Timer()
         self.timer.totalTime = 10
         self.lblTimer = lblTimer()
+        self.prevScore = 0
         
         self.pouch = []
         for i in range(10):
@@ -88,24 +93,69 @@ class Game(simpleGE.Scene):
             if self.player.collidesWith(Coin):
                 Coin.reset()
                 self.lblScore.addScore(1)
+                self.pickUp.play()
         
         self.lblTimer.text = f"Time: {self.timer.getTimeLeft():.2f}"
         if self.timer.getTimeLeft() <=0:
-            print(self.lblScore.score)
+            self.prevScore = self.lblScore.score
             self.stop()
+            print(self.prevScore)
+            
             
 class startScreen(simpleGE.Scene):
-    def __init__(self):
+    def __init__(self, score):
         super().__init__()
         self.setImage("Background.png")
         
-        self.buttonPlay = simpleGE.Button()
-               
+        self.instructions = simpleGE.MultiLabel()
+        self.instructions.textLines = [
+            "As a squirrel, you live to collect Acorns.",
+            "Move with the Left and Right arrow keys!",
+            "Catch as many Acorns as you can within 10 seconds!",
+            "",
+            "Use the Up arrow to start!",
+            "Or use the down arrow to quit."]
+        
+        self.instructions.center = (320, 240)
+        self.instructions.size = (550, 300)
+        
+        self.btnPlay = simpleGE.Button()
+        self.btnPlay.center = (150, 420)
+        self.btnPlay.text = "Play"
+        self.btnQuit = simpleGE.Button()
+        self.btnQuit.center = (500, 420)
+        self.btnQuit.text = "Quit"
+        
+        self.lblPScore = simpleGE.Label()
+        self.lblPScore.center = (320, 50)
+        self.lblPScore.size = (200, 30)
+        self.lblPScore.bgColor = "white"
+        self.lblPScore.fgColor = "black"
+        self.lblPScore.text = f"previous score: {score} "
+        
+        self.sprites = [ self.instructions, self.btnPlay, self.btnQuit, self.lblPScore]
+             
+    def process(self):
+        if self.btnQuit.clicked or self.isKeyPressed(pygame.K_DOWN):
+            self.response = "Quit"
+            self.stop()
+        if self.btnPlay.clicked or self.isKeyPressed(pygame.K_UP):
+            self.response = "Play"
+            self.stop()
+            
+        
 def main():
-    startScreen = startScreen()
-    startScreen.start
-    game = Game()
-    game.start()
+    keepGoing = True
+    score = 1337
+    while keepGoing:
+        startMenu = startScreen(score)
+        startMenu.start()
+        if startMenu.response == "Play":
+            game = Game()
+            game.start()
+            score = game.prevScore
+        else:
+            keepGoing = False
     
 if __name__ == "__main__":
     main()
