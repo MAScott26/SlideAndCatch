@@ -40,7 +40,7 @@ class Coin(simpleGE.Sprite):
     def reset(self):
         self.x = random.randint(0, self.screenWidth)
         self.y = 10
-        self.dy = random.randint(5, 20)
+        self.dy = random.randint(5, 11)
         
     def checkBounds(self):
         if self.bottom > self.screenHeight:
@@ -146,7 +146,7 @@ class startScreen(simpleGE.Scene):
         
 def main():
     keepGoing = True
-    score = 1337
+    score = 0
     while keepGoing:
         startMenu = startScreen(score)
         startMenu.start()
